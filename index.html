@@ -26,8 +26,6 @@
             --primary-hover: var(--primary-hover-light);
             --card-bg: var(--card-bg-light);
             --shadow: var(--shadow-light);
-
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         body {
@@ -41,6 +39,7 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         body.dark {
@@ -66,6 +65,7 @@
         h1 {
             color: var(--primary-color);
             margin-top: 0;
+            transition: color 0.3s ease;
         }
 
         p {
@@ -81,7 +81,7 @@
             color: #ffffff;
             cursor: pointer;
             font-weight: 600;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s ease, color 0.2s ease;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -95,17 +95,47 @@
 
     <main class="container">
         <h1>Theme Toggler</h1>
-        <p>Click the button below to switch between light and dark themes. The theme state is applied by adding or removing a 'dark' class on the body element.</p>
+        <p>Click the button below to switch themes. Your preference is automatically saved in your browser's local storage and will be remembered on your next visit.</p>
         <button id="dark-mode-toggle">Toggle Dark Mode</button>
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const toggleButton = document.getElementById('dark-mode-toggle');
+            const body = document.body;
+            const themeKey = 'theme-preference';
+
+            // Function to apply the theme class to the body
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    body.classList.add('dark');
+                } else {
+                    body.classList.remove('dark');
+                }
+            };
+
+            // Check for saved theme in localStorage
+            const savedTheme = localStorage.getItem(themeKey);
             
+            // Check for user's system preference
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            // Apply theme on initial load:
+            // 1. Prioritize saved theme from localStorage.
+            // 2. Fallback to system preference.
+            // 3. Default to light theme.
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            } else if (prefersDark) {
+                applyTheme('dark');
+            }
+
+            // Set up the button click event listener
             if (toggleButton) {
                 toggleButton.addEventListener('click', () => {
-                    document.body.classList.toggle('dark');
+                    body.classList.toggle('dark');
+                    const currentTheme = body.classList.contains('dark') ? 'dark' : 'light';
+                    localStorage.setItem(themeKey, currentTheme);
                 });
             } else {
                 console.error('Error: Toggle button with ID "dark-mode-toggle" not found.');
