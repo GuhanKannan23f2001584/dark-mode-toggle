@@ -1,3 +1,2 @@
-# dark-mode-toggle
-
-Generated application for dark-mode-toggle
+bash
+    git clone https://github.com/GuhanKannan23f2001584/dark-mode-toggle.git
